@@ -1,7 +1,7 @@
 import Test.HUnit
 import Feeder
 
-expectedCalendar :: [Proportion]
+expectedCalendar :: Calendar
 expectedCalendar = [
   Proportion {day = 1, newFeed = 1, oldFeed = 6},
   Proportion {day = 2, newFeed = 1, oldFeed = 6},

@@ -17,9 +17,9 @@ instance InterpretingContext IO where
   
   run (Free (Commit next)) = do
     contents <- readFile fileName
-    let commitDay = getCommitDayNumber (lines contents)
-    putStrLn ("committing day " ++ show commitDay)
-    appendFile fileName ((show commitDay) ++ "\n")
+    let commitDay = show $ getCommitDayNumber (lines contents)
+    putStrLn ("committing day " ++ commitDay)
+    appendFile fileName (commitDay ++ "\n")
     run next
   
   run (Free (Rollback next)) = do
@@ -36,13 +36,19 @@ instance InterpretingContext IO where
     traverse (\l -> appendFile fileName (l ++ "\n")) butLast
     run next
 
-  run (Free (GetCurrent next)) = do
+  run (Free (GetCurrent out)) = do
     contents <- readFile fileName
     let allLines = (lines contents)
         lastDay = case reverse allLines of
-          [] -> "n/a"
-          (x:_) -> x
-    putStrLn $ "current day is: " ++ lastDay
+          [] -> 0
+          (x:_) -> read x :: Int -- TODO
+    putStrLn $ "current day is: " ++ (show lastDay)
+    run $ out lastDay
+
+  run (Free (RenderCalendar currentDay next)) = do
+    _ <- putStrLn "day / new feed / old feed"
+    let calendar = getCalendar
+    _ <- traverse putStrLn (map (\tuple -> proportionFormatter (snd tuple) ((fst tuple) == currentDay) )  (zipWith (\i e -> (i, e)) [0..] calendar))
     run next
 
   run (Free Done) = return ()
@@ -50,21 +56,19 @@ instance InterpretingContext IO where
 
 logic :: Free Event ()
 logic = do
-  getCurrent
-  x <- commit
+  commit
   rollback
   commit
+  currentDay <- getCurrent
+  renderCalendar currentDay
   done
 
-proportionFormatter :: Proportion -> String
-proportionFormatter (Proportion day newFeed oldFeed) = format "{0}       {1}         {2}" [(printf "%2d." day), show newFeed, show oldFeed]
+proportionFormatter :: Proportion -> Bool -> String
+proportionFormatter (Proportion day newFeed oldFeed) isCurrent = format "{0}       {1}         {2}" [(printf "%2d." day), show newFeed, show oldFeed] ++ (if isCurrent then " <-- You are here" else "")
 
 main :: IO ()
 main = do
-  _ <- putStrLn "day / new feed / old feed"
-  let calendar = getCalendar
-  _ <- traverse putStrLn (map proportionFormatter calendar)
-  return ()
+  run logic :: IO ()
 
 -- TODO
 -- commands

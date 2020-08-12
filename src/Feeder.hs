@@ -2,6 +2,7 @@ module Feeder
   (
     getCalendar
   , Proportion (..)
+  , Calendar
   ) where
 
 type NewFeed = Int
@@ -13,18 +14,20 @@ data Proportion = Proportion {
   , oldFeed :: OldFeed
 } deriving (Eq, Show)
 
+type Calendar = [Proportion]
+
 incProportionDay :: Proportion -> Proportion
 incProportionDay (Proportion day newFeed oldFeed) = Proportion (day + 1) newFeed oldFeed
 
 startingPoint :: Proportion
 startingPoint = Proportion 1 1 6
 
-reducer :: [Proportion] -> Int -> [Proportion]
+reducer :: Calendar -> Int -> Calendar
 reducer acc forDay =
         let last = head acc
         in (calculateProportion forDay last) : acc
 
-getCalendar :: [Proportion]
+getCalendar :: Calendar
 getCalendar = 
   let
     zero = [startingPoint]
