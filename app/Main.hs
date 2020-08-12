@@ -53,11 +53,28 @@ instance InterpretingContext IO where
 
 testLogic :: Free Event ()
 testLogic = do
-  commit
-  rollback
-  commit
+  commitLogic
+  rollbackLogic
+  commitLogic
+  getCalendarStateLogic
+  done
+
+getCalendarStateLogic :: Free Event ()
+getCalendarStateLogic = do
   currentDay <- getCurrent
   renderCalendar currentDay
+  done
+
+commitLogic :: Free Event ()
+commitLogic = do
+  commit
+  getCalendarStateLogic
+  done
+
+rollbackLogic :: Free Event ()
+rollbackLogic = do
+  rollback
+  getCalendarStateLogic
   done
 
 proportionFormatter :: Proportion -> Bool -> String
