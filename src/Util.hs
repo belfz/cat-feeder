@@ -1,6 +1,7 @@
 module Util
   (
     getCommitDayNumber
+  , getLastDayNumber
   ) where
 
 import Text.Read
@@ -12,5 +13,10 @@ lastOption list = case (reverse list) of
 
 getCommitDayNumber :: [String] -> Int
 getCommitDayNumber list = case ((lastOption list) >>= readMaybe) of
-  (Just day) ->  day + 1
+  (Just day) -> day + 1
+  Nothing    -> 1
+
+getLastDayNumber :: [String] -> Int
+getLastDayNumber list = case ((lastOption list) >>= readMaybe) of
+  (Just day) -> day
   Nothing    -> 1

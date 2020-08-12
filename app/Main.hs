@@ -17,7 +17,7 @@ instance InterpretingContext IO where
   
   run (Free (Commit next)) = do
     contents <- readFile fileName
-    let commitDay = show $ getCommitDayNumber (lines contents)
+    let commitDay = show $ (+1) $ getLastDayNumber (lines contents)
     putStrLn ("committing day " ++ commitDay)
     appendFile fileName (commitDay ++ "\n")
     run next
@@ -38,24 +38,21 @@ instance InterpretingContext IO where
 
   run (Free (GetCurrent out)) = do
     contents <- readFile fileName
-    let allLines = (lines contents)
-        lastDay = case reverse allLines of
-          [] -> 0
-          (x:_) -> read x :: Int -- TODO
+    let lastDay = getLastDayNumber (lines contents)
     putStrLn $ "current day is: " ++ (show lastDay)
     run $ out lastDay
 
   run (Free (RenderCalendar currentDay next)) = do
     _ <- putStrLn "day / new feed / old feed"
     let calendar = getCalendar
-    _ <- traverse putStrLn (map (\tuple -> proportionFormatter (snd tuple) ((fst tuple) == currentDay) )  (zipWith (\i e -> (i, e)) [0..] calendar))
+    _ <- traverse putStrLn (map (\tuple -> proportionFormatter (snd tuple) ((fst tuple) == currentDay) )  (zipWith (\i e -> (i, e)) [1..] calendar))
     run next
 
   run (Free Done) = return ()
 
 
-logic :: Free Event ()
-logic = do
+testLogic :: Free Event ()
+testLogic = do
   commit
   rollback
   commit
@@ -64,11 +61,11 @@ logic = do
   done
 
 proportionFormatter :: Proportion -> Bool -> String
-proportionFormatter (Proportion day newFeed oldFeed) isCurrent = format "{0}       {1}         {2}" [(printf "%2d." day), show newFeed, show oldFeed] ++ (if isCurrent then " <-- You are here" else "")
+proportionFormatter (Proportion day newFeed oldFeed) isCurrent = format "{0}       {1}         {2}{3}" [(printf "%2d." day), show newFeed, show oldFeed, (if isCurrent then " <-- You are here" else "")]
 
 main :: IO ()
 main = do
-  run logic :: IO ()
+  run testLogic :: IO ()
 
 -- TODO
 -- commands
