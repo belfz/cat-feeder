@@ -10,6 +10,7 @@ module Events
   ) where
 
 import Control.Monad.Free
+import Control.Monad
 
 data Event next =
   Commit next |
@@ -30,5 +31,5 @@ getCurrent = liftF $ GetCurrent ()
 done :: Free Event ()
 done = liftF Done
 
-class InterpretingContext a where
-  run :: Free Event () -> a
+class Monad m => InterpretingContext m where
+  run :: Free Event () -> m ()

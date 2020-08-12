@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8690ac15ec8629758744d4814e7848b687df89a0481d3db5e4848ae6fa101e5a
+-- hash: 9d1fb6d3afc7e55cd4d0c23f6d37b9a4452e7bf9da6f99fe7c81a8cf05850727
 
 name:           cat-feeder
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Events
       Feeder
       Lib
+      Util
   other-modules:
       Paths_cat_feeder
   hs-source-dirs:

@@ -13,7 +13,8 @@ import Text.Format
 fileName :: String
 fileName = "log"
 
-instance InterpretingContext (IO ()) where
+instance InterpretingContext IO where
+  
   run (Free (Commit next)) = do
     contents <- readFile fileName
     let commitDay = getCommitDayNumber (lines contents)
@@ -50,7 +51,7 @@ instance InterpretingContext (IO ()) where
 logic :: Free Event ()
 logic = do
   getCurrent
-  commit
+  x <- commit
   rollback
   commit
   done
