@@ -85,8 +85,4 @@ main = do
   run testLogic :: IO ()
 
 -- TODO
--- commands
--- show current day (day header + today's line)
--- show calendar with "you are here"
--- restart all (with confirmation
--- Free do operacji na pliku (Start? | Commit | Rollback | Restart)
+-- command line args to match the scenario logic
