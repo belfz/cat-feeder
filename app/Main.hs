@@ -78,7 +78,8 @@ rollbackLogic = do
   done
 
 proportionFormatter :: Proportion -> Bool -> String
-proportionFormatter (Proportion day newFeed oldFeed) isCurrent = format "{0}       {1}         {2}{3}" [(printf "%2d." day), show newFeed, show oldFeed, (if isCurrent then " <-- You are here" else "")]
+proportionFormatter (Proportion day newFeed oldFeed) isCurrent =
+  format "{0}       {1}         {2}{3}" [(printf "%2d." day), show newFeed, show oldFeed, (if isCurrent then " <-- You are here" else "")]
 
 main :: IO ()
 main = do
